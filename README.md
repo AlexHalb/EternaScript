@@ -3,9 +3,9 @@ Evaluates user scripts from [Eterna](eternagame.org).
 
 To use, first follow the instructions for [building the folding engines](Engines/README.md)
 
-To evaluate code, import the `Script` class from `eval.ts`. Then, use
+To evaluate code, import the `EternaScript` class from `eval.ts`. Then, use
 ```
-(new Script).evaluate(code, input)
+(new EternaScript).evaluate(code, input)
 ```
 `code` is a string of code to evaluate. It has access to the scripting library and classes. `input` contains inputs for the script. Inputs vary between scripts; however `timeout` works for all scripts. An example is:
 ```

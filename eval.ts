@@ -1,6 +1,6 @@
 import { RNA, RNAElement, RNAException, Library} from './Lib';
 import { ScriptResult } from './Types';
-export class Script{
+export class EternaScript {
   evaluate(code: string, input: {[key: string]: string}) {
     return new Promise<ScriptResult>(resolve => { // Lib loading is async, so I'm forced to use PRomises
       const Lib = new Library(() => { // Once the library is loaded, run the script
@@ -78,15 +78,3 @@ export class Script{
     return code;
   }
 }
-(new Script).evaluate(`
-["Vienna", "Vienna2", "Nupack", "Contrafold", "LinearFoldC", "LinearFoldV"].forEach(e => {
-  outln(Lib.energyOfStruct(sequence, Lib.fold(sequence, e), e));
-  out(': ');
-  out(e);
-});
-`, {
-  timeout: "20",
-  sequence: "gcaugcuaguagucagcgCGGCGCGGCGCGCGCGCGGCGCGCGCGcgcgcauagcuagcugacuag",
-}).then(e => {
-  console.log(e);
-})
