@@ -16,4 +16,4 @@ CMakeCache
 CMakeFiles
 Makefile
 cmake_install.cmake
-emsdk
+emsdk/
