@@ -4,46 +4,29 @@ export class EternaScript {
   evaluate(code: string, input: {[key: string]: string}) {
     return new Promise<ScriptResult>(resolve => { // Lib loading is async, so I'm forced to use PRomises
       const Lib = new Library(() => { // Once the library is loaded, run the script
-        const {VM} = require('vm2');
-        const vm = new VM({
-          sandbox: { // Allows user code access to classes
-            Lib,
-            RNAElement,
-            RNAException,
-            RNA,
-            startTime: (new Date().getTime()),
-          }
-        });
+        let consoleString = '';
         // Inserts input variables
         Object.keys(input).forEach(k => {
           code = `var ${k} = "${input[k]}";\n${code}`;
         });
+        const timer = new Date();
         // Adds timeouts to loops
-        code = this.insertTimeout(code, parseFloat(input.timeout || '10'), new Date());
+        code = this.insertTimeout(code, parseFloat(input.timeout || '10'), timer);
         // Wraps code in a function so return values can be retrieved
+        function out(str) {
+          consoleString = `${str}${consoleString};`
+        }
+        function outln(str) {
+          consoleString = `${str}\n${consoleString};`
+        }
         code = `function runCode() { ${code} }; runCode();`;
         // Escapes ` characters (twice) so they don't cause an error (see below)
-        code = code.replace(/\`/g, '\\`');
-        // Run the formatted code in a new, secure context
-        let result = vm.run(`
-          function run() {
-            var scriptResult = '';
-            function out(str) { // Pervasives
-              scriptResult = \`\$\{str\}\$\{scriptResult\}\`;
-            }
-            function outln(str) {
-              scriptResult = \`\$\{str\}\n\$\{scriptResult\}\`;
-            }
-            return {
-              result: eval(\`${code}\`), // If code had \` characters, it would end the string early. They are escaped
-              // Order is important - code must be run first, otherwise the console and time are returned before they have the right values
-              console: scriptResult,
-              time: (new Date().getTime()) - startTime,
-            }
-          }
-          run();
-        `);
-        resolve(result);
+        let result = eval(code);
+        resolve({
+          result,
+          console: consoleString,
+          time: new Date().getTime() - timer.getTime(),
+        });
       })
     });
   }
