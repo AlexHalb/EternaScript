@@ -1,6 +1,7 @@
 import { RNA, RNAElement, RNAException, Library} from './Lib';
 import { ScriptResult } from './Types';
 export default class EternaScript {
+  constructor() {}
   evaluate(code: string, input: {[key: string]: string}) {
     return new Promise<ScriptResult>(resolve => { // Lib loading is async, so I'm forced to use PRomises
       const Lib = new Library(() => { // Once the library is loaded, run the script
