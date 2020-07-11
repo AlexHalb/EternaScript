@@ -12,13 +12,14 @@ export class EternaScript {
     this.source = source;
     this.input = input;
   }
-  evaluate(onOut: (e: string) => void = () => {}) {
+  evaluate() {
     const promise = new Promise<ScriptResult>(resolve => { // Lib loading is async, so I'm forced to use Promises
       const Lib = new Library(() => { // Once the library is loaded, run the script
         let code = this.source;
         let input = this.input || {
           'timeout': '10'
         };
+        let { onConsole, onClear } = this;
         // Inserts input variables
         Object.keys(input).forEach(k => {
           code = `var ${k} = "${input[k]}";\n${code}`;
@@ -28,10 +29,13 @@ export class EternaScript {
         code = this.insertTimeout(code, parseFloat(input.timeout || '10'), timer);
         // Wraps code in a function so return values can be retrieved
         function out(str) {
-          if (onOut) onOut(str);
+          if (onConsole) onConsole(str);
         }
         function outln(str) {
-          if (onOut) onOut(str + '\n');
+          if (onConsole) onConsole(`\n${str}`);
+        }
+        function clear() {
+          if (onClear) onClear();
         }
         let _RNA = RNA;
         let _RNAException = RNAException;
@@ -77,13 +81,14 @@ export class EternaScript {
     code += source;
     return code;
   }
+
+  onConsole : (e: string) => void;
+  onClear : () => void;
 }
 
 const script = new EternaScript(`
-  out(new RNA('((...))').getChilds());
+  out(new RNA('((...))'));
 `);
-script.evaluate((e) => {
-  console.log(e);
-}).then(e => {
+script.evaluate().then(e => {
   console.log(e);
 });

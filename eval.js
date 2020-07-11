@@ -21,6 +21,7 @@ var EternaScript = /** @class */ (function () {
                 var input = _this.input || {
                     'timeout': '10'
                 };
+                var _a = _this, onConsole = _a.onConsole, onClear = _a.onClear;
                 // Inserts input variables
                 Object.keys(input).forEach(function (k) {
                     code = "var " + k + " = \"" + input[k] + "\";\n" + code;
@@ -32,6 +33,8 @@ var EternaScript = /** @class */ (function () {
                 function out(str) {
                     if (onOut)
                         onOut(str);
+                    if (onConsole)
+                        onConsole(str);
                 }
                 function outln(str) {
                     if (onOut)
@@ -85,7 +88,8 @@ var EternaScript = /** @class */ (function () {
     return EternaScript;
 }());
 exports.EternaScript = EternaScript;
-var script = new EternaScript("\n  out(new RNA('((...))').getChilds());\n");
+var script = new EternaScript("\n  out(new RNA('((...))'));\n");
+script.onConsole = function () { return console.log('AHHKSADHLASKDHASD'); };
 script.evaluate(function (e) {
     console.log(e);
 }).then(function (e) {

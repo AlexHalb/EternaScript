@@ -17,11 +17,9 @@ let script = new EternaScript('code here', {
 ```
 This creates a script. To evalutate, the code, run
 ```
-script.evaluate((consoleItem) => {
-  // do something with the console item
-});
+script.evaluate();
 ```
-`Script.evaluate()` returns a promise. When the promise is resolved, it returns an object of the form
+`EternaScript.evaluate()` returns a promise. When the promise is resolved, it returns an object of the form
 ```
 {
   result: string | undefined,
@@ -29,3 +27,5 @@ script.evaluate((consoleItem) => {
 }
 ```
 `time` is how long (in milliseconds) the script took to run. `result` is a value given by a `return` statement in the script.
+
+If you want to use the output of the console (in the scripts, `out`, `outln`, and `clear`), set the `onConsole` and/or `onClear` properties of scripts. `onConsole` takes on argument, the string printed to the console. `onClear` takes no arguments.
