@@ -6,8 +6,9 @@ export class EternaScript {
   input: {
     [key: string]: string,
   }
+  _global_timer = new Date();
   constructor(source: string = '', input: {[name: string]: string} = {
-    'timeout': '10'
+    'Timeout': '10'
   }) {
     this.source = source;
     this.input = input;
@@ -17,16 +18,16 @@ export class EternaScript {
       const Lib = new Library(() => { // Once the library is loaded, run the script
         let code = this.source;
         let input = this.input || {
-          'timeout': '10'
+          'Timeout': '10'
         };
         let { onConsole, onClear } = this;
         // Inserts input variables
         Object.keys(input).forEach(k => {
           code = `var ${k} = "${input[k]}";\n${code}`;
         });
-        const timer = new Date();
+        this._global_timer = new Date();
         // Adds timeouts to loops
-        code = this.insertTimeout(code, parseFloat(input.timeout || '10'), timer);
+        code = this.insertTimeout(code, parseFloat(input.timeout || '10'));
         // Wraps code in a function so return values can be retrieved
         function out(str) {
           if (onConsole) onConsole(str);
@@ -45,15 +46,15 @@ export class EternaScript {
         let result = eval(code);
         resolve({
           result,
-          time: new Date().getTime() - timer.getTime(),
+          time: new Date().getTime() - this._global_timer.getTime(),
         });
       })
     });
     return promise;
   }
   // Copied directly from the existing script with a few modifications
-  insertTimeout(source: string, timeout: number, start: Date) {
-    var inserted_code = "if((new Date()).getTime() - " + start.getTime() + " > " + timeout * 1000 + ") {outln(\""+timeout+"sec timeout\"); return 'Timeout';};";
+  insertTimeout(source: string, timeout: number) {
+    var inserted_code = "if((new Date()).getTime() - " + this._global_timer.getTime() + " > " + timeout * 1000 + ") {outln(\""+timeout+"sec timeout\"); return 'Timeout';};";
     var regexp = /while\s*\([^\)]*\)\s*\{?|for\s*\([^\)]*\)\s*\{?/;
     var code = "";
     while(source.search(regexp) != -1){
