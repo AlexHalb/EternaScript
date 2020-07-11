@@ -1,2 +1,7 @@
 node_modules/
-Engines/
+Engines/contrafold.js
+Engines/LinearFoldC.js
+Engines/LinearFoldV.js
+Engines/nupack.js
+Engines/vienna.js
+Engines/vienna2.js
