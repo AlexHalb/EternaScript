@@ -34,4 +34,3 @@ If you want to use the output of the console (in the scripts, `out`, `outln`, an
 Slight modifications need to be made to use this in production or with other HTML.
 
 * In each of the folding engines, comment out any lines that have `prompt()`
-* In [Lib.ts](Lib.ts), 
