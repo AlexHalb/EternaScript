@@ -34,7 +34,6 @@ interface FullEvalResult {
 
 interface ScriptResult {
   result: string | undefined;
-  console: string | undefined;
   time: number;
 }
 

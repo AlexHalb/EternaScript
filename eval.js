@@ -1,42 +1,45 @@
 "use strict";
 exports.__esModule = true;
-exports.Script = void 0;
+exports.EternaScript = void 0;
 var Lib_1 = require("./Lib");
-var Script = /** @class */ (function () {
-    function Script() {
+var es6_promise_1 = require("es6-promise");
+var EternaScript = /** @class */ (function () {
+    function EternaScript() {
     }
-    Script.prototype.evaluate = function (code, input) {
+    EternaScript.prototype.evaluate = function (code, input, onOut) {
         var _this = this;
-        return new Promise(function (resolve) {
+        if (onOut === void 0) { onOut = function () { }; }
+        var promise = new es6_promise_1.Promise(function (resolve) {
             var Lib = new Lib_1.Library(function () {
-                var VM = require('vm2').VM;
-                var vm = new VM({
-                    sandbox: {
-                        Lib: Lib,
-                        RNAElement: Lib_1.RNAElement,
-                        RNAException: Lib_1.RNAException,
-                        RNA: Lib_1.RNA,
-                        startTime: (new Date().getTime())
-                    }
-                });
                 // Inserts input variables
                 Object.keys(input).forEach(function (k) {
                     code = "var " + k + " = \"" + input[k] + "\";\n" + code;
                 });
+                var timer = new Date();
                 // Adds timeouts to loops
-                code = _this.insertTimeout(code, parseFloat(input.timeout || '10'), new Date());
+                code = _this.insertTimeout(code, parseFloat(input.timeout || '10'), timer);
                 // Wraps code in a function so return values can be retrieved
+                function out(str) {
+                    if (onOut)
+                        onOut(str);
+                }
+                function outln(str) {
+                    if (onOut)
+                        onOut(str);
+                }
                 code = "function runCode() { " + code + " }; runCode();";
                 // Escapes ` characters (twice) so they don't cause an error (see below)
-                code = code.replace(/\`/g, '\\`');
-                // Run the formatted code in a new, secure context
-                var result = vm.run("\n          function run() {\n            var scriptResult = '';\n            function out(str) { // Pervasives\n              scriptResult = `${str}${scriptResult}`;\n            }\n            function outln(str) {\n              scriptResult = `${str}\n${scriptResult}`;\n            }\n            return {\n              result: eval(`" + code + "`), // If code had ` characters, it would end the string early. They are escaped\n              // Order is important - code must be run first, otherwise the console and time are returned before they have the right values\n              console: scriptResult,\n              time: (new Date().getTime()) - startTime,\n            }\n          }\n          run();\n        ");
-                resolve(result);
+                var result = eval(code);
+                resolve({
+                    result: result,
+                    time: new Date().getTime() - timer.getTime()
+                });
             });
         });
+        return promise;
     };
     // Copied directly from the existing script with a few modifications
-    Script.prototype.insertTimeout = function (source, timeout, start) {
+    EternaScript.prototype.insertTimeout = function (source, timeout, start) {
         var inserted_code = "if((new Date()).getTime() - " + start.getTime() + " > " + timeout * 1000 + ") {outln(\"" + timeout + "sec timeout\"); return 'Timeout';};";
         var regexp = /while\s*\([^\)]*\)\s*\{?|for\s*\([^\)]*\)\s*\{?/;
         var code = "";
@@ -66,12 +69,10 @@ var Script = /** @class */ (function () {
         code += source;
         return code;
     };
-    return Script;
+    return EternaScript;
 }());
-exports.Script = Script;
-(new Script).evaluate("\n[\"Vienna\", \"Vienna2\", \"Nupack\", \"Contrafold\", \"LinearFoldC\", \"LinearFoldV\"].forEach(e => {\n  outln(Lib.energyOfStruct(sequence, Lib.fold(sequence, e), e));\n  out(': ');\n  out(e);\n});\n", {
-    timeout: "20",
-    sequence: "gcaugcuaguagucagcgCGGCGCGGCGCGCGCGCGGCGCGCGCGcgcgcauagcuagcugacuag"
-}).then(function (e) {
-    console.log(e);
-});
+exports.EternaScript = EternaScript;
+var script = new EternaScript;
+script.evaluate('out(2)', {
+    'timeout': '10'
+}, function (e) { return console.log(e); }).then(function (e) { return console.log(e); });

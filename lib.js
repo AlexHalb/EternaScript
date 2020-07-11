@@ -37,18 +37,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.RNAException = exports.RNAElement = exports.RNA = exports.Library = void 0;
-var V = require("../src/eterna/folding/engines/vienna.js");
-var V2 = require("../src/eterna/folding/engines/vienna2.js");
-var N = require("../src/eterna/folding/engines/nupack.js");
-var C = require("../src/eterna/folding/engines/contrafold.js");
-var LFC = require("../src/eterna/folding/engines/LinearFoldC.js");
-var LFV = require("../src/eterna/folding/engines/LinearFoldV.js");
+var V = require("./Engines/vienna.js");
+var V2 = require("./Engines/vienna2.js");
+var N = require("./Engines/nupack.js");
+var C = require("./Engines/contrafold.js");
+var LFC = require("./Engines/LinearFoldC.js");
+var LFV = require("./Engines/LinearFoldV.js");
 var axios_1 = require("axios");
 var Library = /** @class */ (function () {
     function Library(onceLoaded) {
         var _this_1 = this;
         if (onceLoaded === void 0) { onceLoaded = function () { }; }
-        var promise = new Promise(function (resolve) { return __awaiter(_this_1, void 0, void 0, function () {
+        this.loadEngines().then(function (e) { return _this_1.engines = e; }).then(onceLoaded);
+    }
+    Library.prototype.loadEngines = function () {
+        return __awaiter(this, void 0, void 0, function () {
             var Vienna, Vienna2, Nupack, Contrafold, LinearFoldC, LinearFoldV;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -70,21 +73,18 @@ var Library = /** @class */ (function () {
                         return [4 /*yield*/, LFV()];
                     case 6:
                         LinearFoldV = _a.sent();
-                        resolve({
-                            Vienna: Vienna,
-                            Vienna2: Vienna2,
-                            Nupack: Nupack,
-                            Contrafold: Contrafold,
-                            LinearFoldV: LinearFoldV,
-                            LinearFoldC: LinearFoldC
-                        });
-                        return [2 /*return*/];
+                        return [2 /*return*/, ({
+                                Vienna: Vienna,
+                                Vienna2: Vienna2,
+                                Nupack: Nupack,
+                                Contrafold: Contrafold,
+                                LinearFoldV: LinearFoldV,
+                                LinearFoldC: LinearFoldC
+                            })];
                 }
             });
-        }); }).then(function (e) {
-            _this_1.engines = e;
-        }).then(onceLoaded);
-    }
+        });
+    };
     Library.prototype.DefaultFold = function (sequence, engine) {
         return engine.FullFoldTemperature(37, sequence, '').structure;
     };

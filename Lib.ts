@@ -1,33 +1,33 @@
-import * as V from './src/eterna/folding/engines/vienna.js';
-import * as V2 from './src/eterna/folding/engines/vienna2.js';
-import * as N from './src/eterna/folding/engines/nupack.js';
-import * as C from './src/eterna/folding/engines/contrafold.js';
-import * as LFC from './src/eterna/folding/engines/LinearFoldC.js';
-import * as LFV from './src/eterna/folding/engines/LinearFoldV.js';
+import * as V from './Engines/vienna.js';
+import * as V2 from './Engines/vienna2.js';
+import * as N from './Engines/nupack.js';
+import * as C from './Engines/contrafold.js';
+import * as LFC from './Engines/LinearFoldC.js';
+import * as LFV from './Engines/LinearFoldV.js';
 import { Vienna, Vienna2, Nupack, Contrafold, LinearFoldC, LinearFoldV, LinearFold, FullFoldResultDefault, FullFoldResultLinearFold, FullEvalResult } from './Types';
 import Axios from 'axios';
 
 
 class Library {
   constructor(onceLoaded: () => void = () => {}) {
-    const promise = new Promise(async (resolve) => {
-      const Vienna = await V();
-      const Vienna2 = await V2();
-      const Nupack = await N();
-      const Contrafold = await C();
-      const LinearFoldC = await LFC();
-      const LinearFoldV = await LFV();
-      resolve({
-        Vienna: Vienna as Vienna,
-        Vienna2: Vienna2 as Vienna,
-        Nupack: Nupack as Nupack,
-        Contrafold: Contrafold as Contrafold,
-        LinearFoldV: LinearFoldV as LinearFoldV,
-        LinearFoldC: LinearFoldC as LinearFoldC,
-      });
-    }).then(e => {
-      this.engines = e;
-    }).then(onceLoaded);
+    this.loadEngines().then(e => this.engines = e).then(onceLoaded);
+  }
+
+  async loadEngines() {
+    const Vienna = await V();
+    const Vienna2 = await V2();
+    const Nupack = await N();
+    const Contrafold = await C();
+    const LinearFoldC = await LFC();
+    const LinearFoldV = await LFV();
+    return ({
+      Vienna: Vienna as Vienna,
+      Vienna2: Vienna2 as Vienna,
+      Nupack: Nupack as Nupack,
+      Contrafold: Contrafold as Contrafold,
+      LinearFoldV: LinearFoldV as LinearFoldV,
+      LinearFoldC: LinearFoldC as LinearFoldC,
+    });
   }
 
 engines !: any;
