@@ -1,9 +1,9 @@
-import * as V from './Engines/vienna.js';
-import * as V2 from './Engines/vienna2.js';
-import * as N from './Engines/nupack.js';
-import * as C from './Engines/contrafold.js';
-import * as LFC from './Engines/LinearFoldC.js';
-import * as LFV from './Engines/LinearFoldV.js';
+import * as V from './vienna.js';
+import * as V2 from './vienna2.js';
+import * as N from './nupack.js';
+import * as C from './contrafold.js';
+import * as LFC from './LinearFoldC.js';
+import * as LFV from './LinearFoldV.js';
 import { Vienna, Vienna2, Nupack, Contrafold, LinearFoldC, LinearFoldV, LinearFold, FullFoldResultDefault, FullFoldResultLinearFold, FullEvalResult } from './Types';
 import Axios from 'axios';
 import { Promise } from 'es6-promise';
