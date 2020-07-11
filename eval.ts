@@ -85,10 +85,3 @@ export class EternaScript {
   onConsole : (e: string) => void;
   onClear : () => void;
 }
-
-const script = new EternaScript(`
-  out(new RNA('((...))'));
-`);
-script.evaluate().then(e => {
-  console.log(e);
-});

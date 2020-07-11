@@ -12,9 +12,8 @@ var EternaScript = /** @class */ (function () {
         this.source = source;
         this.input = input;
     }
-    EternaScript.prototype.evaluate = function (onOut) {
+    EternaScript.prototype.evaluate = function () {
         var _this = this;
-        if (onOut === void 0) { onOut = function () { }; }
         var promise = new es6_promise_1.Promise(function (resolve) {
             var Lib = new Lib_1.Library(function () {
                 var code = _this.source;
@@ -31,14 +30,16 @@ var EternaScript = /** @class */ (function () {
                 code = _this.insertTimeout(code, parseFloat(input.timeout || '10'), timer);
                 // Wraps code in a function so return values can be retrieved
                 function out(str) {
-                    if (onOut)
-                        onOut(str);
                     if (onConsole)
                         onConsole(str);
                 }
                 function outln(str) {
-                    if (onOut)
-                        onOut(str + '\n');
+                    if (onConsole)
+                        onConsole("\n" + str);
+                }
+                function clear() {
+                    if (onClear)
+                        onClear();
                 }
                 var _RNA = Lib_1.RNA;
                 var _RNAException = Lib_1.RNAException;
@@ -88,10 +89,11 @@ var EternaScript = /** @class */ (function () {
     return EternaScript;
 }());
 exports.EternaScript = EternaScript;
-var script = new EternaScript("\n  out(new RNA('((...))'));\n");
-script.onConsole = function () { return console.log('AHHKSADHLASKDHASD'); };
-script.evaluate(function (e) {
+var script = new EternaScript("\n  outln(Lib.fold('GCGGAAACGC'));\n  outln(Lib.energy_of_structure('GCGGAAACGC', '(((....)))'));\n");
+script.onConsole = function (e) {
     console.log(e);
-}).then(function (e) {
-    console.log(e);
+};
+script.evaluate().then(function (e) {
+    console.log("Result: " + e.result);
+    console.log("Completed in " + e.time + " ms");
 });
