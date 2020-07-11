@@ -1,40 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 exports.__esModule = true;
 exports.RNAException = exports.RNAElement = exports.RNA = exports.Library = void 0;
 var V = require("./Engines/vienna.js");
@@ -46,42 +10,30 @@ var LFV = require("./Engines/LinearFoldV.js");
 var axios_1 = require("axios");
 var Library = /** @class */ (function () {
     function Library(onceLoaded) {
-        var _this_1 = this;
         if (onceLoaded === void 0) { onceLoaded = function () { }; }
-        this.loadEngines().then(function (e) { return _this_1.engines = e; }).then(onceLoaded);
+        this.loadEngines(onceLoaded);
     }
-    Library.prototype.loadEngines = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var Vienna, Vienna2, Nupack, Contrafold, LinearFoldC, LinearFoldV;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, V()];
-                    case 1:
-                        Vienna = _a.sent();
-                        return [4 /*yield*/, V2()];
-                    case 2:
-                        Vienna2 = _a.sent();
-                        return [4 /*yield*/, N()];
-                    case 3:
-                        Nupack = _a.sent();
-                        return [4 /*yield*/, C()];
-                    case 4:
-                        Contrafold = _a.sent();
-                        return [4 /*yield*/, LFC()];
-                    case 5:
-                        LinearFoldC = _a.sent();
-                        return [4 /*yield*/, LFV()];
-                    case 6:
-                        LinearFoldV = _a.sent();
-                        return [2 /*return*/, ({
-                                Vienna: Vienna,
-                                Vienna2: Vienna2,
-                                Nupack: Nupack,
-                                Contrafold: Contrafold,
-                                LinearFoldV: LinearFoldV,
-                                LinearFoldC: LinearFoldC
-                            })];
-                }
+    Library.prototype.loadEngines = function (then) {
+        var _this_1 = this;
+        V().then(function (a) {
+            V2().then(function (b) {
+                N().then(function (c) {
+                    C().then(function (d) {
+                        LFC().then(function (e) {
+                            LFV().then(function (f) {
+                                _this_1.engines = {
+                                    Vienna: a,
+                                    Vienna2: b,
+                                    Nupack: c,
+                                    Contrafold: d,
+                                    LinearFoldV: e,
+                                    LinearFoldC: f
+                                };
+                                then();
+                            });
+                        });
+                    });
+                });
             });
         });
     };
@@ -113,7 +65,7 @@ var Library = /** @class */ (function () {
     Library.prototype.LinearFoldEnergyOfStruct = function (sequence, structure, engine) {
         return engine.FullEval(sequence, structure).energy;
     };
-    Library.prototype.energyOfStruct = function (sequence, structure, name) {
+    Library.prototype.energy_of_structure = function (sequence, structure, name) {
         if (name === void 0) { name = 'Vienna'; }
         var engine = this.getEngineWithName(name);
         switch (name.toLowerCase()) {

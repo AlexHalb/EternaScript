@@ -11,25 +11,21 @@ To use, first build the folding engines. Follow the instructions over at the [Et
 
 To evaluate code, import the `EternaScript` class from `eval.ts`. Then, use
 ```
-(new EternaScript).evaluate(code, input)
+let script = new EternaScript('code here', {
+  'input1': 'input 1 value',
+});
 ```
-`code` is a string of code to evaluate. It has access to the scripting library and classes. `input` contains inputs for the script. Inputs vary between scripts; however `timeout` works for all scripts. An example is:
+This creates a script. To evalutate, the code, run
 ```
-const code = "return Lib.fold(sequence, engine);"
-const input = {
-  sequence: "GCGGAAACGC",
-  engine: "Vienna",
-  timeout: "10"
-}
-const script = new Script;
-script.evaluate(code, input).then(e => console.log(e))
+script.evaluate((consoleItem) => {
+  // do something with the console item
+});
 ```
 `Script.evaluate()` returns a promise. When the promise is resolved, it returns an object of the form
 ```
 {
   result: string | undefined,
-  console: string | undefined,
   time: number,
 }
 ```
-`time` is how long (in milliseconds) the script took to run. `result` is a value given by a `return` statement in the script. `console` is a (possibly) multiline string made up of the results of `out` and `outln` statements in the script.
+`time` is how long (in milliseconds) the script took to run. `result` is a value given by a `return` statement in the script.

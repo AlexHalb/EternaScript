@@ -1,11 +1,24 @@
 import { RNA, RNAElement, RNAException, Library} from './Lib';
 import { ScriptResult } from './Types';
 import { Promise } from 'es6-promise';
-class EternaScript {
-  constructor() {}
-  evaluate(code: string, input: {[key: string]: string}, onOut: (e: string) => void = () => {}) {
-    const promise = new Promise<ScriptResult>(resolve => { // Lib loading is async, so I'm forced to use PRomises
+export class EternaScript {
+  source: string;
+  input: {
+    [key: string]: string,
+  }
+  constructor(source: string = '', input = {
+    'timeout': '10'
+  }) {
+    this.source = source;
+    this.input = input;
+  }
+  evaluate(onOut: (e: string) => void = () => {}) {
+    const promise = new Promise<ScriptResult>(resolve => { // Lib loading is async, so I'm forced to use Promises
       const Lib = new Library(() => { // Once the library is loaded, run the script
+        let code = this.source;
+        let input = this.input || {
+          'timeout': '10'
+        };
         // Inserts input variables
         Object.keys(input).forEach(k => {
           code = `var ${k} = "${input[k]}";\n${code}`;
@@ -20,7 +33,10 @@ class EternaScript {
         function outln(str) {
           if (onOut) onOut(str + '\n');
         }
-        code = `function runCode() { ${code} }; runCode();`;
+        let _RNA = RNA;
+        let _RNAException = RNAException;
+        let _RNAElement = RNAElement;
+        code = `let RNA = _RNA; let RNAException = _RNAException; let  RNAElement = _RNAElement; function runCode() { ${code} }; runCode();`;
         // Escapes ` characters (twice) so they don't cause an error (see below)
         let result = eval(code);
         resolve({
@@ -62,10 +78,12 @@ class EternaScript {
     return code;
   }
 }
-export { EternaScript };
 
-const script = new EternaScript;
-script.evaluate('out(2)', {
-  'timeout': '10',
-},
-(e) => console.log(e)).then(e => console.log(e));
+const script = new EternaScript(`
+  out(new RNA('((...))').getChilds());
+`);
+script.evaluate((e) => {
+  console.log(e);
+}).then(e => {
+  console.log(e);
+});

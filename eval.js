@@ -4,13 +4,23 @@ exports.EternaScript = void 0;
 var Lib_1 = require("./Lib");
 var es6_promise_1 = require("es6-promise");
 var EternaScript = /** @class */ (function () {
-    function EternaScript() {
+    function EternaScript(source, input) {
+        if (source === void 0) { source = ''; }
+        if (input === void 0) { input = {
+            'timeout': '10'
+        }; }
+        this.source = source;
+        this.input = input;
     }
-    EternaScript.prototype.evaluate = function (code, input, onOut) {
+    EternaScript.prototype.evaluate = function (onOut) {
         var _this = this;
         if (onOut === void 0) { onOut = function () { }; }
         var promise = new es6_promise_1.Promise(function (resolve) {
             var Lib = new Lib_1.Library(function () {
+                var code = _this.source;
+                var input = _this.input || {
+                    'timeout': '10'
+                };
                 // Inserts input variables
                 Object.keys(input).forEach(function (k) {
                     code = "var " + k + " = \"" + input[k] + "\";\n" + code;
@@ -25,9 +35,12 @@ var EternaScript = /** @class */ (function () {
                 }
                 function outln(str) {
                     if (onOut)
-                        onOut(str);
+                        onOut(str + '\n');
                 }
-                code = "function runCode() { " + code + " }; runCode();";
+                var _RNA = Lib_1.RNA;
+                var _RNAException = Lib_1.RNAException;
+                var _RNAElement = Lib_1.RNAElement;
+                code = "let RNA = _RNA; let RNAException = _RNAException; let  RNAElement = _RNAElement; function runCode() { " + code + " }; runCode();";
                 // Escapes ` characters (twice) so they don't cause an error (see below)
                 var result = eval(code);
                 resolve({
@@ -72,7 +85,9 @@ var EternaScript = /** @class */ (function () {
     return EternaScript;
 }());
 exports.EternaScript = EternaScript;
-var script = new EternaScript;
-script.evaluate('out(2)', {
-    'timeout': '10'
-}, function (e) { return console.log(e); }).then(function (e) { return console.log(e); });
+var script = new EternaScript("\n  out(new RNA('((...))').getChilds());\n");
+script.evaluate(function (e) {
+    console.log(e);
+}).then(function (e) {
+    console.log(e);
+});

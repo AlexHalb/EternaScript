@@ -6,27 +6,34 @@ import * as LFC from './Engines/LinearFoldC.js';
 import * as LFV from './Engines/LinearFoldV.js';
 import { Vienna, Vienna2, Nupack, Contrafold, LinearFoldC, LinearFoldV, LinearFold, FullFoldResultDefault, FullFoldResultLinearFold, FullEvalResult } from './Types';
 import Axios from 'axios';
-
+import { Promise } from 'es6-promise';
 
 class Library {
   constructor(onceLoaded: () => void = () => {}) {
-    this.loadEngines().then(e => this.engines = e).then(onceLoaded);
+    this.loadEngines(onceLoaded);
   }
 
-  async loadEngines() {
-    const Vienna = await V();
-    const Vienna2 = await V2();
-    const Nupack = await N();
-    const Contrafold = await C();
-    const LinearFoldC = await LFC();
-    const LinearFoldV = await LFV();
-    return ({
-      Vienna: Vienna as Vienna,
-      Vienna2: Vienna2 as Vienna,
-      Nupack: Nupack as Nupack,
-      Contrafold: Contrafold as Contrafold,
-      LinearFoldV: LinearFoldV as LinearFoldV,
-      LinearFoldC: LinearFoldC as LinearFoldC,
+  loadEngines(then: () => void) {
+    V().then(a => {
+    V2().then(b => {
+    N().then(c => {
+    C().then(d => {
+    LFC().then(e => {
+    LFV().then(f => {
+      this.engines = {
+        Vienna: a as Vienna,
+        Vienna2: b as Vienna2,
+        Nupack: c as Nupack,
+        Contrafold: d as Contrafold,
+        LinearFoldV: e as LinearFoldV,
+        LinearFoldC: f as LinearFoldC,
+      };
+      then();
+    });
+    });
+    });
+    });
+    });
     });
   }
 
@@ -65,7 +72,7 @@ LinearFoldEnergyOfStruct(sequence: string, structure: string, engine: LinearFold
   return engine.FullEval(sequence, structure).energy;
 }
 
-energyOfStruct(sequence: string, structure: string, name: string = 'Vienna') {
+energy_of_structure(sequence: string, structure: string, name: string = 'Vienna') {
   let engine = this.getEngineWithName(name);
   switch (name.toLowerCase()) {
     case 'vienna':
