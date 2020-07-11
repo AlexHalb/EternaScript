@@ -6,7 +6,7 @@ export class EternaScript {
   input: {
     [key: string]: string,
   }
-  constructor(source: string = '', input = {
+  constructor(source: string = '', input: {[name: string]: string} = {
     'timeout': '10'
   }) {
     this.source = source;
