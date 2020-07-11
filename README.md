@@ -1,7 +1,13 @@
 # Eterna Scripting
 Evaluates user scripts from [Eterna](eternagame.org).
 
-To use, first follow the instructions for [building the folding engines](Engines/README.md)
+To use, first build the folding engines. Follow the instructions over at the [EternaJS](https://github.com/eternagame/EternaJS) repository. This produces several JS files corresponding to the engines. Drag the JS files into the Engines directory. By the end, there should be 6 files:
+- contrafold.js
+- LinearFoldC.js
+- LinearFoldV.js
+- nupack.js
+- vienna.js
+- vienna2.js
 
 To evaluate code, import the `EternaScript` class from `eval.ts`. Then, use
 ```
